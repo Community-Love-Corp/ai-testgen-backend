@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push: 
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        
+    - name: Install backend dependencies
+      run: |
+        cd ai-testgen-backend
+        npm install
+
+    - name: Run backend tests
+      run: |
+        cd ai-testgen-backend
+        npm test
+    
+    - name: Install frontend dependencies
+      run: |
+        cd ai-testgen-frontend
+        npm install
+    
+    - name: Build frontend
+      run: |
+        cd ai-testgen-frontend
+        npm test
+        
+       
