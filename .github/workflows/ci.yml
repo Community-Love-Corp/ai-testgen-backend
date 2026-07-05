@@ -20,12 +20,10 @@ jobs:
         
     - name: Install backend dependencies
       run: |
-        cd ai-testgen-backend
         npm install
 
     - name: Run backend tests
       run: |
-        cd ai-testgen-backend
         npm test
     
     - name: Install frontend dependencies

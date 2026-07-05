@@ -1,3 +1,51 @@
 .env
-node_modules
-ai-testgen-frontend/node_modules
+/node_modules
+/ai-testgen-frontend/node_modules
+/ai-testgen-frontend/build
+/build
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dependencies
+/ai-testgen-frontend/node_modules
+/ai-testgen-frontend/.pnp
+/ai-testgen-frontend.pnp.js
+
+# testing
+/ai-testgen-frontend/coverage
+
+# production
+/ai-testgen-frontend/build
+
+# misc
+/ai-testgen-frontend/.DS_Store
+/ai-testgen-frontend/.env.local
+/ai-testgen-frontend/.env.development.local
+/ai-testgen-frontend/.env.test.local
+/ai-testgen-frontend/.env.production.local
+
+/ai-testgen-frontend/npm-debug.log*
+/ai-testgen-frontend/yarn-debug.log*
+/ai-testgen-frontend/yarn-error.log*
