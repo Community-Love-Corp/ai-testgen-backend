@@ -166,14 +166,17 @@ app.get('/history', async (req, res) =>{
 
 // Only listen if the file is run directly, not when imported by Jest
 if (process.env.NODE_ENV !== 'test') {
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {
     console.log(`AI TestGen backend running on port ${PORT}`);
   });
 }
 
+export { app };
+
+
 // Export the raw app instance
-export default app;
+//export default app;
 
 //cd ai-testgen-frontend
 //npm install --save-dev @testing-library/react @testing-library/jest-dom jest-environment-jsdom
