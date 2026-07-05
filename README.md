@@ -2,11 +2,11 @@
 
 ## Versions
 
-0.01 Sunday 5 July 2026 17:41:
+####0.01 Sunday 5 July 2026 17:41:
 
 Initialised.
 
-0.02 Sunday 5 July 2026 18:31:
+####0.02 Sunday 5 July 2026 18:31:
 
 The backend test was failing in CI pipeline with error:
 
@@ -28,3 +28,7 @@ b. Getting server.js to start app without reference to default
 ```
 export { app };
 ```
+
+####0.03 Sunday 5 July 2026 18:45:
+
+Changed node version in ci.yml to 22.
