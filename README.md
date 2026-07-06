@@ -32,3 +32,7 @@ export { app };
 ####0.03 Sunday 5 July 2026 18:45:
 
 Changed node version in ci.yml to 22.
+
+###1.00 Monday 6 July 2026 17:45:
+
+Made updates to frontend in order to enable it to communciate with backend in Production.

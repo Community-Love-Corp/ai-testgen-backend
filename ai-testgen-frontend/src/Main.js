@@ -17,7 +17,7 @@ function Main() {
     setResult(null);
     
     try {
-      const res = await axios.post( "http://localhost:3001/generate-tests", {
+      const res = await axios.post( process.env.server-url+"/generate-tests", {
         userStory,  
       });
       setResult(res.data);

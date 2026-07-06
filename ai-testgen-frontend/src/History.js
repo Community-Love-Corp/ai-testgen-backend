@@ -5,7 +5,7 @@ function History(){
   const [items, setItems] = useState([]);
   
   useEffect(() => {
-    axios.get("http://localhost:3001/history")
+    axios.get(process.env.server-url, "/history")
     .then(res => {
       console.log("History response: ", res.data);
       setItems(res.data);
