@@ -3,6 +3,7 @@ import axios from "axios";
 
 function History(){
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACKEND_URL}/history`)
@@ -10,6 +11,7 @@ function History(){
     .then(res => {
       console.log("History response: ", res.data);
       setItems(res.data);
+      setLoading(false);
     })
     .catch(err => {
       console.error("History error:", err);

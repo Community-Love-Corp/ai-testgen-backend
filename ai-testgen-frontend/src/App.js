@@ -27,6 +27,10 @@ return (
   </div>*/
 //  <div className='History'>
     <Router>
+    <nav className="navbar">
+      <a href="/">Generate</a>
+      <a href="/history">History</a>
+    </nav>
       <div className="Logo">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />

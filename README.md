@@ -1,23 +1,90 @@
 
 # AI TestGen
 
-AI-powered Requirements & Test Case Generator for Agile Teams.
+## The AI Powered Requirements & Test Case Generator for Agile Teams
 
-## 1.0 Features
-- Generate clarified requirements
-- Generate functional tests
-- Generate edge cases
-- Generate API tests
-- Generate acceptance criteria
-- Save history of generations
-- Full-stack app (React + Node + SQLite)
-- CI/CD with GitHub Actions
-- Cloud deployment
+## 1.0 Description
 
-## 2.0 Architecture
-Frontend (React) → Backend (Node/Express) → AI Model (OpenAI) → SQLite DB
+###1.1 What is it?
 
-## 3.0 Running Locally
+In 2026, Software is built almost exclusively by Agile teams. Iterative development and Minimal Viable Product paradigms of scrum agile software development means the team is almost always trying to put something infront of the customer at the end of the sprint. In the rush, teamwork can often suffer as the speed of delivery is considered the most important factor in 'keeping the business', making it easier to rely on individual brilliance to get the outputs. In order to enable Quality Assurance to play an equal part in the Software development process, it has to keep up with the pace during sprint planning and execution. It is here that this 'AI Test Generator' product plugs in. It facilitates utilisation of Artificial Intelligence capabilities to create refined/'instantly usable' test requirements within seconds. Further, it maintains a history of past searches to enable resuability.
+
+### 1.2 Features
+
+• Clarified requirements
+• Functional tests
+• Edge cases
+• API tests
+• Acceptance criteria
+• History page
+• SQLite persistence
+• Full stack (React + Node + Express)
+• CI/CD with GitHub Actions
+• Deployed on Render
+
+## 3.0 Folder Structure (Nested Frontend Inside Backend)
+
+
+```
+ai-testgen-backend/                 # Root of the monorepo
+│
+├── server.js                       # Express server entry point
+├── db.js                           # SQLite database setup
+├── package.json                    # Backend dependencies & scripts
+├── .env                            # Local environment variables (OpenAI key, etc.)
+├── node_modules/                   # Backend dependencies
+│
+├── ai-testgen-frontend/            # React frontend (nested inside backend)
+│   ├── src/
+│   │   ├── App.js                  # React Router root
+│   │   ├── Main.js                 # Generate Test Cases page
+│   │   ├── History.js              # History page
+│   │   ├── index.js                # React entry point
+│   │   └── styles.css              # Global styling (optional)
+│   │
+│   ├── public/
+│   │   ├── index.html              # Main HTML template
+│   │   ├── favicon.ico             # App icon
+│   │   └── _redirects              # SPA routing fallback for Render
+│   │
+│   ├── build/                      # Production build output (auto‑generated)
+│   ├── package.json                # Frontend dependencies & scripts
+│   ├── .env.production             # Backend API URL for production
+│   └── node_modules/               # Frontend dependencies
+│
+├── tests/                          # Jest + Supertest API tests
+│   └── server.test.js
+│
+└── .github/
+    └── workflows/
+        └── ci.yml                  # GitHub Actions CI pipeline
+```
+
+ The project is structured as a **nested full‑stack monorepo**, where the backend (Node.js + Express + SQLite) lives at the root, and the frontend (React) lives inside the `ai-testgen-backend/ai-testgen-frontend` directory.  
+  
+ This structure is fully supported by Render:  
+ - The backend service uses `ai-testgen-backend` as its root directory  
+ - The frontend service uses `ai-testgen-backend/ai-testgen-frontend` as its root directory  
+  
+ The backend exposes two API endpoints (`/generate-tests` and `/history`) and stores results in SQLite.  
+ The frontend is a single‑page React application using React Router for navigation and Axios to call the backend API.  
+
+ CI/CD is handled via GitHub Actions.
+
+## 4.0 Architecture
+
+```
+React Frontend (Render)
+        ↓ Axios
+Node/Express Backend (Render)
+        ↓
+SQLite Database
+        ↓
+Artificial Intelligence Provider's API
+```
+
+
+## 5.0 Running Locally
 cd ai-testgen-backend
 npm install
 node server.js
@@ -26,17 +93,42 @@ cd ai-testgen-frontend
 npm install
 npm start
 
-## 4.0 API
+## 6.0 API
 POST /generate-tests
 GET /history
 
-## 5.0 Deployment
+## 7.0 Deployment
 Backend: http://localhost:3001
 Frontend: http://localhost:3000
 Production Backend: https://ai-testgen-backend.onrender.com
 Production Frontend: https://ai-testgen-frontend.onrender.com
 
-## 6.0 Versions
+## 8.0 Screenshots
+
+a. AI TestGen Deployed in Cloud
+
+![Render Dashboard showing deployed applications](./screenshots/Render-Dashboard.jpg) 
+
+b. Dynamic Test Case Generation with backend service utilizing AI:
+
+![Dynamic Test Case Generation with AI](./screenshots/AI-Test-Case-Generator.jpg)
+
+c. REACT SPA application shows history page of all queries made to date, via call to backend which hosts a database. 
+
+![Backend History of Dynamic Test Case Generations](./screenshots/AI-Test-Case-History.jpg)
+
+d. CI Pipeline passing
+
+i) Continuous Integration Backend tests passing
+ 
+![Continuous Integration Backend tests passing](./screenshots/Backend-ci-tests.jpg)
+
+ii) Continuous Integration Frontend tests passing
+
+![Continuous Integration Frontend tests passing](./screenshots/Frontend-ci-tests.jpg)
+
+
+## 7.0 Versions
 
 ####0.01 Sunday 5 July 2026 17:41:
 
