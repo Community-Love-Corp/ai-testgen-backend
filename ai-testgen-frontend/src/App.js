@@ -8,8 +8,8 @@ import "./App.css";
 
 function App() {
 return (
-  <>
-  <div className="App">
+//  <>
+ /* <div className="App">
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
       <p>
@@ -24,7 +24,7 @@ return (
         Learn React
       </a>
     </header>
-  </div>
+  </div>*/
   <div className='History'>
     <Router>
       <Routes>
@@ -33,7 +33,7 @@ return (
       </Routes>
     </Router>
   </div>
-  </>
+//  </>
   );
 }
 export default App;
