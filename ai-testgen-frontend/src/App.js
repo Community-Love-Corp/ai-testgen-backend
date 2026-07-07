@@ -25,14 +25,14 @@ return (
       </a>
     </header>
   </div>*/
-  <div className='History'>
+//  <div className='History'>
     <Router>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/history" element={<History />} />
       </Routes>
     </Router>
-  </div>
+//  </div>
 //  </>
   );
 }
