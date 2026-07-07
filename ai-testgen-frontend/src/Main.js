@@ -2,14 +2,14 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useState } from "react";
 import axios from "axios";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Main() {
   const [userStory, setUserStory] = useState("");
   const [result, setResult] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
- // const navigate = useNavigate();
+  const navigate = useNavigate();
     
   const generateTests = async () => {
     setLoading(true);
@@ -47,11 +47,11 @@ function Main() {
       <p><button onClick={() => window.location.href = "/history"}>
              View History
            </button></p> 
-           {/*
-      <button className='generate-btn' onClick={() => navigate("/history")}>
+           <p>{
+      <button onClick={() => navigate("/history")}>
         Show History
       </button>
-           */}
+           }</p>
       {result && (
         <div className="results">
           <h2>Clarified Requirement</h2>

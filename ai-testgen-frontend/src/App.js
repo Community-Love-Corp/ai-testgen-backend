@@ -27,10 +27,12 @@ return (
   </div>*/
 //  <div className='History'>
     <Router>
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/history" element={<History />} />
-      </Routes>
+      <div className='App'>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/history" element={<History />} />
+          </Routes>
+       </div>
     </Router>
 //  </div>
 //  </>
