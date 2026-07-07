@@ -22,7 +22,7 @@ In 2026, Software is built almost exclusively by Agile teams. Iterative developm
 • CI/CD with GitHub Actions
 • Deployed on Render
 
-## 3.0 Folder Structure (Nested Frontend Inside Backend)
+## 2.0 Folder Structure (Nested Frontend Inside Backend)
 
 
 ```
@@ -71,7 +71,7 @@ ai-testgen-backend/                 # Root of the monorepo
 
  CI/CD is handled via GitHub Actions.
 
-## 4.0 Architecture
+## 3.0 Architecture
 
 ```
 React Frontend (Render)
@@ -84,26 +84,48 @@ Artificial Intelligence Provider's API
 ```
 
 
-## 5.0 Running Locally
+## 4.0 Running Locally
+
+a. Frontend
+
+```
 cd ai-testgen-backend
 npm install
 node server.js
+```
 
+b. Backend
+
+```
 cd ai-testgen-frontend
 npm install
 npm start
+```
+## 5.0 API
 
-## 6.0 API
 POST /generate-tests
+
 GET /history
 
-## 7.0 Deployment
-Backend: http://localhost:3001
-Frontend: http://localhost:3000
-Production Backend: https://ai-testgen-backend.onrender.com
-Production Frontend: https://ai-testgen-frontend.onrender.com
+## 6.0 Deployment
 
-## 8.0 Screenshots
+a. Local implementation
+
+```
+Backend: http://localhost:3001
+
+Frontend: http://localhost:3000
+```
+
+b. Production implementation
+
+```
+Backend: https://ai-testgen-backend.onrender.com
+
+Frontend: https://ai-testgen-frontend.onrender.com
+```
+
+## 7.0 Screenshots
 
 a. AI TestGen Deployed in Cloud
 
@@ -128,7 +150,7 @@ ii) Continuous Integration Frontend tests passing
 ![Continuous Integration Frontend tests passing](./screenshots/Frontend-ci-tests.jpg)
 
 
-## 7.0 Versions
+## 8.0 Versions
 
 ####0.01 Sunday 5 July 2026 17:41:
 
