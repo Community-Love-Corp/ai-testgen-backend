@@ -44,14 +44,9 @@ function Main() {
       {loading && <p className="loading">Generating...</p>}
       {error && <p className="error">{error}</p>}
            
-      <p><button onClick={() => window.location.href = "/history"}>
-             View History
-           </button></p> 
-           <p>{
-      <button onClick={() => navigate("/history")}>
+      <p>{<button onClick={() => navigate("/history")}>
         Show History
-      </button>
-           }</p>
+      </button>}</p>
       {result && (
         <div className="results">
           <h2>Clarified Requirement</h2>
