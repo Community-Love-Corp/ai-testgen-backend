@@ -1,5 +1,5 @@
 import axios from "axios";
-
+//import { toast } from "react-toastify"; // 1. Import toast engine
 // 1. AUTOMATICALLY ATTACH TOKEN TO ALL OUTGOING REQUESTS
 axios.interceptors.request.use(
   (config) => {
@@ -23,7 +23,12 @@ axios.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.warn("Token expired or unauthorized. Logging out...");
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // Safe redirect without using React Hooks/Toasts here
+         window.location.href = "/login?expired=true"; 
+  /*    const handleActionCheck = () => {
+        toast.warn("Token expired or unauthorized. Logging out...Please Login again.");
+      };*/
+
     }
     return Promise.reject(error);
   }

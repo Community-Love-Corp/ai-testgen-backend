@@ -3,6 +3,7 @@ import './App.css';
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+//import { toast } from "react-toastify"; // 1. Import toast engine
 
 function Main() {
   const [userStory, setUserStory] = useState("");
@@ -15,7 +16,16 @@ function Main() {
   const checkAuth = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please click the Login button to log in first.");
+      //alert("Please click the Login button to log in first.");
+      //const handleActionCheck = () => {
+        // 2. Replace: alert("Please click the Login button to log in first.");
+      //  toast.warn("Please click the Login button to log in first.");
+      //};
+      window.dispatchEvent(
+        new CustomEvent("app-notify", { 
+          detail: { message: "Please click the Login button to log in first." } 
+        })
+      );
       return false;
     }
     return token;
@@ -40,10 +50,22 @@ function Main() {
       setResult(res.data);
     } catch (err) {
       setError("Failed to generate test cases.");
-    }
-    
+      
+      // Catch the 401 Unauthorized status code instantly here!
+      if (err.response && err.response.status === 401) {
+        console.warn("Session expired.");
+        localStorage.removeItem("token");
+        
+        // Bounces the user to the login screen with the URL parameter safely
+        window.location.href = "/login?expired=true";
+        return;
+      }
+      // Generic fallback for other server issues
+      console.error("Data loading breakdown:", err);
+    } 
     setLoading(false);
   };
+
 
   const handleHistoryClick = () => {
     // Check authentication status before navigating
@@ -76,6 +98,7 @@ function Main() {
       </p>
       {result && (
         <div className="results">
+        
           <h2>Clarified Requirement</h2>
           <p>{result.clarifiedRequirement}</p>
 
@@ -117,5 +140,4 @@ function Main() {
     </div>
   );
 }
-
 export default Main;

@@ -5,31 +5,44 @@ function History() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState("");
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setAuthError("Please login to view your history.");
-      setLoading(false);
+  try {
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        setAuthError("Please login to view your history.");
+        setLoading(false);
+        return;
+      }
+  
+      // Corrected the closing parenthesis to include the headers object
+      axios.get(`${process.env.REACT_APP_BACKEND_URL}/history`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        console.log("History response: ", res.data);
+        setItems(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("History error:", err);
+        setLoading(false);
+      });
+    }, []);
+  } catch (err) {
+    // Catch the 401 Unauthorized status code instantly here!
+    if (err.response && err.response.status === 401) {
+      console.warn("Session expired.");
+      localStorage.removeItem("token");
+      
+      // Bounces the user to the login screen with the URL parameter safely
+      window.location.href = "/login?expired=true";
       return;
     }
-
-    // Corrected the closing parenthesis to include the headers object
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/history`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => {
-      console.log("History response: ", res.data);
-      setItems(res.data);
-      setLoading(false);
-    })
-    .catch(err => {
-      console.error("History error:", err);
-      setLoading(false);
-    });
-  }, []);
-  
+    
+    // Generic fallback for other server issues
+    console.error("Data loading breakdown:", err);
+  }
   // Render loading state
   if (loading) {
     return <div className="container"><p>Loading history...</p></div>;
@@ -41,6 +54,7 @@ function History() {
   }
 
   return (
+    
     <div className="container">
       <h1>History</h1>
       {items.length === 0 ? (

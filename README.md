@@ -161,11 +161,11 @@ ii) Continuous Integration Frontend tests passing
 
 ## 8.0 Versions
 
-####0.01 Sunday 5 July 2026 17:41:
+#### 0.01 Sunday 5 July 2026 17:41:
 
 Initialised.
 
-####0.02 Sunday 5 July 2026 18:31:
+#### 0.02 Sunday 5 July 2026 18:31:
 
 The backend test was failing in CI pipeline with error:
 
@@ -188,11 +188,11 @@ b. Getting server.js to start app without reference to default
 export { app };
 ```
 
-####0.03 Sunday 5 July 2026 18:45:
+#### 0.03 Sunday 5 July 2026 18:45:
 
 Changed node version in ci.yml to 22.
 
-###1.00 Monday 6 July 2026 17:45:
+### 1.00 Monday 6 July 2026 17:45:
 
 Made updates to frontend in order to enable it to communciate with backend in Production.
 
@@ -206,11 +206,11 @@ b. REACT SPA application shows history page of all queries made to date, via cal
 
 ![Cost savings via cloud infrastructure destruction](./screenshots/AI-Test-Case-History.jpg)
 
-####1.01 Tuesday 7 July 2026 14:02:
+#### 1.01 Tuesday 7 July 2026 14:02:
 
 Completed Readme (this document).
 
-####1.02 Friday 17 July 2026 22:33:
+#### 1.02 Friday 17 July 2026 22:33:
 
 App working locally. 
 
@@ -224,11 +224,16 @@ ii. Nav bar, when user logged in
 
 ![User logged in](./screenshots/AuthenticationLoggedIn.jpg)
 
-c. If Token expires, user made to login
+b. If Token expires, user made to login
 
 ![User asked to login, when button clicked after token expiry](./screenshots/JwtTokenExpiry.jpg)
 
-d. If user not logged in, app's features don't work
+c. If user not logged in, app's features don't work
 
 ![User cannot view History, if not logged in](./screenshots/NegativeTest.jpg)
 
+#### 2.0 Saturday 18 July 2026 
+
+Email verification working
+
+![User cannot view History, if not logged in](./screenshots/emailworking.jpg)

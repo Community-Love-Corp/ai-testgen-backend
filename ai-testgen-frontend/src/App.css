@@ -1,3 +1,29 @@
+/* 1. Target headings and text directly on the dark page background */
+.page-container > h1, 
+.page-container > h2, 
+.page-container > h3, 
+.page-container > p, 
+.page-container > label {
+  color: #e0e0e0 !important; /* Soft white ONLY for root-level dark page text */
+}
+
+/* 2. EXCLUDE history panels and generation cards (Keep their text readable) */
+.history-card, 
+.generation-result-card,
+.history-card *, 
+.generation-result-card * {
+  color: #1a1a2e !important; /* Restores a professional dark navy/black color inside white cards */
+}
+
+
+/* Enhances the presentation header at the top of the interface */
+.page-container h2 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+
 .App {
   text-align: center;
 }
@@ -80,3 +106,87 @@
     transform: rotate(360deg);
   }
 }
+
+/* Container Box Placement */
+.toast-portal-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 9999;
+  font-family: sans-serif;
+}
+
+/* Base Card Animations */
+.toast-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 280px;
+  max-width: 360px;
+  padding: 14px 20px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.25s cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Distinctive Type Modifiers */
+.alert-error { background-color: #e63946; border-left: 5px solid #b71c1c; }
+.alert-warn { background-color: #ffb703; color: #1a1a2e; border-left: 5px solid #fb8500; }
+.alert-success { background-color: #2a9d8f; border-left: 5px solid #1a655d; }
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding-left: 15px;
+  opacity: 0.7;
+}
+.toast-close:hover { opacity: 1; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Container to restrict page content width and center it */
+.page-container {
+  max-width: 800px;        /* Restricts the width so text isn't stretched out */
+  width: 90%;             /* Adds breathing room/padding on small mobile screens */
+  margin: 40px auto;      /* Centering alignment trick ('auto' centers horizontally) */
+  background-color: #1a1a2e; /* Slightly lighter dark panel to pop out from wallpaper */
+  border-radius: 8px;     /* Soft rounded modern corners */
+  padding: 30px;          /* Inner spacing for forms and content cards */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); /* Adds a subtle drop shadow depth */
+  box-sizing: border-box;
+}
+
+/* Optional wrapper for the full site background layer */
+.app-content {
+  background-color: #0b0b13; /* Your base dark wallpaper color */
+  min-height: calc(100vh - 70px); /* Fills out remaining viewport height */
+  overflow: hidden;
+}
+
+/* Soft white color for text area label descriptions */
+.form-label {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Modifies the inner placeholder text inside your text fields */
+.page-container textarea::placeholder,
+.page-container input::placeholder {
+  color: #a0a0a0; /* Slightly darker gray placeholder so it looks distinct from typed text */
+}
+
+

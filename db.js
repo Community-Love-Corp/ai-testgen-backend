@@ -1,7 +1,18 @@
-import Database from "better-sqlite3";
+import Database from 'better-sqlite3';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const db = new Database("ai-testgen.db");
+// 1. Get the absolute path of the current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// 2. Lock down the exact path to your database file
+const dbPath = path.resolve(__dirname, 'database.sqlite');
+
+console.log(`[Database] Connecting to absolute path: ${dbPath}`);
+
+// 3. Initialize the database using the absolute path
+const db = new Database(dbPath, { verbose: console.log });
 //Create table if not exists
 
 db.exec(`
@@ -13,14 +24,19 @@ db.exec(`
   );
 `);
 
+// Inside your db.js table initialization block:
 db.exec(`
-	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		email TEXT UNIQUE NOT NULL,
-		password TEXT NOT NULL,
-		createdAt TEXT NOT NULL
-	);
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL CHECK(length(email) <= 50),
+    password TEXT NOT NULL CHECK(length(password) <= 255), /* Hashing procedure requires extended length */
+    createdAt TEXT NOT NULL,
+    isVerified INTEGER DEFAULT 0,
+    verificationToken TEXT,
+    verificationTokenExpires TEXT
+  );
 `);
+
 
 //db.exec(`
 //	ALTER TABLE generations ADD COLUMN userId INTEGER;	
@@ -30,7 +46,7 @@ const tableInfo = db.pragma("table_info(generations)");
 const columnExists = tableInfo.some(col => col.name === 'userId');
 
 if (!columnExists) {
-  db.exec("ALTER TABLE generations ADD COLUMN userId INTEGER NO NULL;"); 
+  db.exec(`ALTER TABLE generations ADD COLUMN userId INTEGER;`); 
 }
 
 
