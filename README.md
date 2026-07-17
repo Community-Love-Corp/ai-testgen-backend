@@ -12,14 +12,23 @@ In 2026, Software is built almost exclusively by Agile teams. Iterative developm
 ### 1.2 Features
 
 • Clarified requirements
+
 • Functional tests
+
 • Edge cases
+
 • API tests
+
 • Acceptance criteria
+
 • History page
+
 • SQLite persistence
+
 • Full stack (React + Node + Express)
+
 • CI/CD with GitHub Actions
+
 • Deployed on Render
 
 ## 2.0 Folder Structure (Nested Frontend Inside Backend)
@@ -89,17 +98,17 @@ Artificial Intelligence Provider's API
 a. Frontend
 
 ```
-cd ai-testgen-backend
+cd ai-testgen-backend/ai-testgen-frontend
 npm install
-node server.js
+npm start
 ```
 
 b. Backend
 
 ```
-cd ai-testgen-frontend
+cd ai-testgen-backend
 npm install
-npm start
+node server.js
 ```
 ## 5.0 API
 
@@ -200,3 +209,26 @@ b. REACT SPA application shows history page of all queries made to date, via cal
 ####1.01 Tuesday 7 July 2026 14:02:
 
 Completed Readme (this document).
+
+####1.02 Friday 17 July 2026 22:33:
+
+App working locally. 
+
+a. User now has to register to use QA AI tool 
+
+i. Nav bar, when user logged out
+
+![User Logged out](./screenshots/Authentication.jpg)
+
+ii. Nav bar, when user logged in
+
+![User logged in](./screenshots/AuthenticationLoggedIn.jpg)
+
+c. If Token expires, user made to login
+
+![User asked to login, when button clicked after token expiry](./screenshots/JwtTokenExpiry.jpg)
+
+d. If user not logged in, app's features don't work
+
+![User cannot view History, if not logged in](./screenshots/NegativeTest.jpg)
+

@@ -13,4 +13,25 @@ db.exec(`
   );
 `);
 
+db.exec(`
+	CREATE TABLE IF NOT EXISTS users (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		email TEXT UNIQUE NOT NULL,
+		password TEXT NOT NULL,
+		createdAt TEXT NOT NULL
+	);
+`);
+
+//db.exec(`
+//	ALTER TABLE generations ADD COLUMN userId INTEGER;	
+//`);
+
+const tableInfo = db.pragma("table_info(generations)");
+const columnExists = tableInfo.some(col => col.name === 'userId');
+
+if (!columnExists) {
+  db.exec("ALTER TABLE generations ADD COLUMN userId INTEGER NO NULL;"); 
+}
+
+
 export default db;

@@ -5,6 +5,13 @@ import React from "react";
 import Main from "./Main";
 import History from "./History";
 import "./App.css";
+import Login from "./Login";
+import Register from "./Register"
+import Interceptor from "./utilities/AxiosInterceptor";
+
+
+// 1. Import Navbar component
+import Navbar from "./Navbar"; 
 
 function App() {
 return (
@@ -27,10 +34,8 @@ return (
   </div>*/
 //  <div className='History'>
     <Router>
-    <nav className="navbar">
-      <a href="/">Generate</a>
-      <a href="/history">History</a>
-    </nav>
+      {/* custom Navbar component*/}
+      <Navbar />
       <div className="Logo">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
@@ -51,15 +56,15 @@ return (
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/history" element={<History />} />
+		      	<Route path="/login" element={<Login />} />
+	       		<Route path="/register" element={<Register />} />
           </Routes>
           <p>
             © 2026 Jyotirmay Sarna. This work is original. Do not copy, repost, or use without permission. Contact general@systematicdefence.tech for permission.
           </p>
        </div>
     </Router>
-//  </div>
-//  </>
-  );
+ );
 }
 export default App;
 

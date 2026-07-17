@@ -1,8 +1,18 @@
+/*
+Author: Jay Sarna
+Last Modified Date: 17 July 2026
+Description: Contains route for querying AI in a structured way, in order to engineer a usable QA response. 
+Responses are stored in SQLite database. Authentication routes for Login and Register, lie in routes folder. 
+Authentication JWT Token verification uses middleware folder.
+*/
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { InferenceClient } from '@huggingface/inference';
 import db from "./db.js";
+import authRoutes from "./routes/auth.js";
+import auth from "./middleware/auth.js"
 
 dotenv.config();
 
@@ -81,9 +91,9 @@ Rules:
 - Respond ONLY with valid JSON.
 `;
 }
-
+app.use("/auth", authRoutes);
 // Route: /generate-tests
-app.post('/generate-tests', async (req, res) =>{
+app.post('/generate-tests', auth, async (req, res) =>{
   try {
     const { userStory } = req.body;
     
@@ -96,7 +106,7 @@ app.post('/generate-tests', async (req, res) =>{
     const completion = await client.chatCompletion({
       model: "meta-llama/Llama-3.1-8B-Instruct",
       messages: [
-        { role: "system", Content: "You generate structured test cases for Agile teams."},
+        { role: "system", content: "You generate structured test cases for Agile teams."},
         { role: "user", content: prompt}
       ],
       max_tokens: 500,
@@ -113,6 +123,7 @@ app.post('/generate-tests', async (req, res) =>{
         raw: cleanedText
       });
     }
+
     // Parse JSON safely
     let parsed;
     try {
@@ -124,31 +135,41 @@ app.post('/generate-tests', async (req, res) =>{
       });
     }
     
-    res.json(parsed);
-    
-    //Save to database
-    const stmt = db.prepare(`
-        INSERT INTO generations (userStory, resultJson, createdAt)
-        VALUES (?, ?, ?) 
-    `);
-    stmt.run(userStory, JSON.stringify(parsed), new Date().toISOString());
+    // 1. Save to database FIRST
+    try {
+      const stmt = db.prepare(`
+          INSERT INTO generations (userStory, resultJson, createdAt, userId)
+          VALUES (?, ?, ?, ?) 
+      `);
+      stmt.run(userStory, JSON.stringify(parsed), new Date().toISOString(), req.userId || null);
+    } catch (dbErr) {
+      // Logs the error to your console but does not crash the user's request
+      console.error("Database saving failed:", dbErr);
+    }
+
+    // 2. Send the successful response to the user LAST
+    return res.json(parsed);
       
   } catch (err) {
     console.error ("Error generating tests:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    // This will only run if the AI client or JSON parsing failed completely
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
   
 });  
 
 // Route: /history
-app.get('/history', async (req, res) =>{
+app.get('/history', auth, async (req, res) =>{
   try {
     const rows = db.prepare(`
       SELECT id, userStory, resultJson, createdAt
       FROM generations
+	  WHERE userId = ?
       ORDER BY id DESC
       LIMIT 20
-      `).all();
+      `).all(req.userId);
     
     const parsed = rows.map(r => ({
       id: r.id,

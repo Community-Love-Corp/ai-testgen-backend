@@ -1,0 +1,69 @@
+/* Base Navbar Layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1a1a2e; /* Dark professional background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Brand/Logo Styling */
+.nav-brand a {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #00fff0; /* Vibrant accent color */
+  text-decoration: none;
+}
+
+/* Links Wrapper */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Standard Navigation Items */
+.nav-item {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  color: #00fff0;
+}
+
+/* Accent Action Button (Register) */
+.nav-btn-primary {
+  background-color: #00fff0;
+  color: #1a1a2e !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.nav-btn-primary:hover {
+  background-color: #00bfff;
+}
+
+/* Logout Button Actions */
+.logout-btn {
+  background-color: transparent;
+  border: 1px solid #ff4d4d;
+  color: #ff4d4d;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #ff4d4d;
+  color: #ffffff !important;
+}
