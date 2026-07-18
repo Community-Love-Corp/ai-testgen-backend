@@ -30,7 +30,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL CHECK(length(email) <= 50),
     password TEXT NOT NULL CHECK(length(password) <= 255), /* Hashing procedure requires extended length */
-    createdAt TEXT NOT NULL,
+    createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Added auto-timestamp fallback
     isVerified INTEGER DEFAULT 0,
     verificationToken TEXT,
     verificationTokenExpires TEXT

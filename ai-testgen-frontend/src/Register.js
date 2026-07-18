@@ -62,7 +62,7 @@ export default function Register() {
 	
 	return (
 		<div>
-			<h2>Register</h2>
+			<h2  style={{ color: 'white' }} >Register</h2>
 			{/* Show registration form if not registered yet */}
 			{!isRegistered ? (
 				<form onSubmit={submit}>

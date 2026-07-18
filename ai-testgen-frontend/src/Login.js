@@ -84,7 +84,7 @@ export default function Login(){
 	
 	return (
 		<form onSubmit={handleLogin}>
-			<h2>Login</h2>
+			<h2  style={{ color: 'white' }} >Login</h2>
 			<input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={50}       
           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" /* Ensures text@text.domain structure */
           title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)" required/>

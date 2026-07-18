@@ -5,6 +5,15 @@ Description: Contains route for querying AI in a structured way, in order to eng
 Responses are stored in SQLite database. Authentication routes for Login and Register, lie in routes folder. 
 Authentication JWT Token verification uses middleware folder.
 */
+//code that prevent app crashing in production, by printing errors
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION CRASH PREVENTED:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION CRASH PREVENTED at:', promise, 'reason:', reason);
+});
+
 
 import express from 'express';
 import cors from 'cors';
