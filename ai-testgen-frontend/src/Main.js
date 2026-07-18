@@ -76,7 +76,7 @@ function Main() {
 
   return (
     <div className="container">
-      <h1>AI Test Case Generator</h1>
+      <h1  style={{ color: 'white' }} >AI Test Case Generator</h1>
 
       <textarea
         className="input-box"

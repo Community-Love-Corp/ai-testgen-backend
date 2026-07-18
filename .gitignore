@@ -3,7 +3,7 @@
 /ai-testgen-frontend/node_modules
 /ai-testgen-frontend/build
 /build
-
+./ai.testgen.db
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

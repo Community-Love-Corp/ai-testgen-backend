@@ -237,3 +237,23 @@ c. If user not logged in, app's features don't work
 Email verification working
 
 ![User cannot view History, if not logged in](./screenshots/emailworking.jpg)
+
+#### 3.0 Saturday 18 July 2026 14:25 HOURS - Deployment to Production
+
+Preparation:
+
+a) Setup .env for backend in Production: Environment group setup on render cloud in preparation for deployment to production, and associated with bankend service.
+
+![Backend .env substitute in render](./screenshots/production-env-group.jpg)
+
+b) DB Migration
+
+In this particular case, I had done very little with the database till now and its presence was cosmetic. This release adds user management to the application and properly implements : 
+
+- 'history of generations' viewing and storing to the db.
+
+Hence, the existing db was simply deleted via following steps:   
+
+i.  Navigate to Render Dashboard> select backend service, 
+ii. Click the Manual Deploy button in the top right. 
+iii. Select Clear Build Cache & Deploy. 
