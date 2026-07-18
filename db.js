@@ -6,8 +6,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 2. Lock down the exact path to your database file
-const dbPath = path.resolve(__dirname, 'database.sqlite');
+// 2. Lock down the exact path to your database file. In Production,
+// Change your database path resolver to use the persistent mount path
+const dbPath = process.env.NODE_ENV === 'production' 
+  ? '/data/database.sqlite' 
+  : path.resolve(__dirname, 'database.sqlite');
 
 console.log(`[Database] Connecting to absolute path: ${dbPath}`);
 

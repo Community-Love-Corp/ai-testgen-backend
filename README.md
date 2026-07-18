@@ -257,3 +257,11 @@ Hence, the existing db was simply deleted via following steps:
 i.  Navigate to Render Dashboard> select backend service, 
 ii. Click the Manual Deploy button in the top right. 
 iii. Select Clear Build Cache & Deploy. 
+
+#### 3.1 Saturday 18 July 2026 20:48 HOURS - Deployment to Production with fixes
+  The Version 3 deployment had failed in Production because, in my locally running application
+I started using absolute paths. However, in production, on render platform, I am using ephermal 
+disk, which changes everytime the app restarts, so absolute paths will not work and each restart
+will result in loss of all data. Since, I am creating a production app, I moved to a paid tier,
+and provisioned a disk. 
+  Further, I made other minor changes to improve accessibility and login.
