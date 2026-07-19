@@ -265,3 +265,7 @@ disk, which changes everytime the app restarts, so absolute paths will not work 
 will result in loss of all data. Since, I am creating a production app, I moved to a paid tier,
 and provisioned a disk. 
   Further, I made other minor changes to improve accessibility and login.
+  
+#### 3.2 Sunday 19 July 2026 13:57 HOURS - Error handling
+
+When trying to register a person already in the db, the error now says email already registered.

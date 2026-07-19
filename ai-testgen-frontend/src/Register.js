@@ -43,22 +43,32 @@ export default function Register() {
         // Alert yourself if the status is unexpected
         console.warn("Unexpected status code received:", res.status);
       }
-    } catch (error) {
-      // Alerts your browser UI if the network request fails completely
-      //alert("Network or Server Error. Check browser console.");
-      //const handleNetworkOrServerError = () => {
-        // 2. Replace: alert("Please click the Login button to log in first.");
-        //toast.warn("Network or Server Error. Check browser console.");
-      //};
-      window.dispatchEvent(
-         new CustomEvent("app-notify", { 
-           detail: { message: "Please click the Login button to log in first."} 
-         })
-       );      
+    } catch (error) { 
 
-      console.error("Registration failed:", error.response?.data?.message || error.message);
-    }
-  };
+      // Extract the specific error message from the backend response 
+
+      // Falls back to error.message if the network request failed entirely 
+
+      const errorMessage = error.response?.data?.error || error.message; 
+
+      
+
+      window.dispatchEvent( 
+
+        new CustomEvent("app-notify", {  
+
+          detail: { message: errorMessage }  
+
+        }) 
+
+      );       
+
+      
+
+      console.error("Registration failed:", errorMessage); 
+
+    } 
+ };
 	
 	return (
 		<div>
