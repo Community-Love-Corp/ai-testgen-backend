@@ -269,3 +269,17 @@ and provisioned a disk.
 #### 3.2 Sunday 19 July 2026 13:57 HOURS - Error handling
 
 When trying to register a person already in the db, the error now says email already registered.
+
+#### 3.3 Sunday 19 July 2026 15:15 HOURS - Prod DB confirmed as working, also backend url
+
+Prod DB:
+
+![User cannot view History, if not logged in](./screenshots/AccessProdDB.jpg)
+
+Prod Backend URL:
+
+![User cannot view History, if not logged in](./screenshots/see-backendurl-from-frontend.jpg)
+
+Rewrite Rule added to backend server to manage calls to pages on React Single Page Application:
+
+![User cannot view History, if not logged in](./screenshots/Rewrite-rule.jpg)
