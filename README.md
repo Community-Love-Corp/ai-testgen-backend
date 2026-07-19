@@ -280,6 +280,6 @@ Prod Backend URL:
 
 ![User cannot view History, if not logged in](./screenshots/see-backendurl-from-frontend.jpg)
 
-Rewrite Rule added to backend server to manage calls to pages on React Single Page Application:
+Rewrite Rule added to Frontend (React Single Page Application) to manage calls to non-homepage urls :
 
 ![User cannot view History, if not logged in](./screenshots/Rewrite-rule.jpg)

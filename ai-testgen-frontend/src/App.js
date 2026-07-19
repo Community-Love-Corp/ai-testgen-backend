@@ -67,7 +67,7 @@ return (
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
               <p>
-                AI Test Case Generator by Jyotirmay sarna
+                AI Test Case Generator by ARRJ Harmony New Zealand
               </p>
               <a
                 className="App-link"
@@ -89,7 +89,7 @@ return (
             <Route path="/verify-email" element={<VerifyEmail />} />
           </Routes>
           <p>
-            © 2026 Jyotirmay Sarna. This work is original. Do not copy, repost, or use without permission. Contact general@systematicdefence.tech for permission.
+            © 2026 ARRJ Harmony New Zealand. This work is original. Do not copy, repost, or use without permission. Contact general@systematicdefence.tech for permission.
           </p>
        </div>
      </div> 
