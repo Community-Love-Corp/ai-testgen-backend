@@ -106,7 +106,10 @@ export default function Register() {
 			) : (
 				/* Show success message and redirect button if registered */
 				<div>
-					<p>Registration successful!  Please check your email (check SPAM folder, if missing in INBOX) to verify your account prior to attempting Login."</p>
+					<p style={{ color: 'white' }} >
+            <b>Registration successful! </b>  
+            <p style={{ color: 'white' }} >Please check your email (check SPAM folder, if missing in INBOX) to verify your account prior to attempting Login.</p>
+          </p>
 					<button className="generate-btn" onClick={() => navigate("/login")}>
 						Go to Login
 					</button>

@@ -7,11 +7,18 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
+let RelativeTransportSecurity;
+
+if (process.env.SMTP_PORT=465){
+  RelativeTransportSecurity = true;
+}else{
+  RelativeTransportSecurity = false;  
+}
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || "465"),
-  secure: true, // true for port 465
+  port: parseInt(process.env.SMTP_PORT), // production traditionally uses 587 and local uses 465
+  secure: RelativeTransportSecurity, // true for port 465, false for 587 (uses STARTTLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -39,5 +46,8 @@ export async function sendVerificationEmail(toEmail, token) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  const info = await transporter.sendMail(mailOptions);
+  console.log("SMTP Message accepted successfully:", info.messageId);
+  console.log("SMTP Response payload:", info.response);
+  return info;
 }

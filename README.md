@@ -285,4 +285,9 @@ Rewrite Rule added to Frontend (React Single Page Application) to manage calls t
 ![User cannot view History, if not logged in](./screenshots/Rewrite-rule.jpg)
 
 #### 3.4 Wednesday 22 July 2026 09:52 HOURS - Improved error handling
+
 - REGISTER endpoint updated with 'adding user' process in db protected with a Transaction, so that if the immediately following 'Email Verification' Fails, the user creation process experiences an auto Rollback. 
+
+#### 3.41 Wednesday 22 July 2026 11:50 HOURS - Frontend interation with mail server
+
+Catering now for TLS too, if required.
