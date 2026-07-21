@@ -15,41 +15,56 @@ import { sendVerificationEmail } from "../utilities/mailer.js";
 
 const router = express.Router();
 
-// 1. REGISTER (Updated with validation fix and email trigger)
-router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password required." });
-  }
-
-  try {
-    const existing = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-    if (existing) {
-      return res.status(409).json({ error: "Email already registered" });
-    }
-
-    const hash = await bcrypt.hash(password, 10);
-    
-    // Generate secure token valid for 24 hours
-    const token = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-    const stmt = db.prepare(`
-      INSERT INTO users (email, password, createdAt, isVerified, verificationToken, verificationTokenExpires) 
-      VALUES (?, ?, ?, 0, ?, ?)
-    `);
-    stmt.run(email, hash, new Date().toISOString(), token, expires);
-
-    // Trigger SMTP mail run safely
-    await sendVerificationEmail(email, token);
-
-    res.status(201).json({ message: "Registration successful. Please check your email to verify your account." });
-  } catch (error) {
-    console.error("Registration route error:", error);
-    res.status(500).json({ error: "Internal server registry breakdown." });
-  }
-});
+// 1. REGISTER (Protected with Transaction and Email Failure Rollback) 
+router.post("/register", async (req, res) => { 
+ const { email, password } = req.body; 
+ 
+ if (!email || !password) { 
+   return res.status(400).json({ error: "Email and password required." }); 
+ } 
+ 
+ try { 
+   const existing = db.prepare("SELECT * FROM users WHERE email = ?").get(email); 
+   if (existing) { 
+     return res.status(409).json({ error: "Email already registered" }); 
+   } 
+ 
+   const hash = await bcrypt.hash(password, 10); 
+   const token = crypto.randomBytes(32).toString("hex"); 
+   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); 
+ 
+   // Open a reliable SQLite manual transaction block 
+   const runTransaction = db.transaction(() => { 
+     const stmt = db.prepare(` 
+       INSERT INTO users (email, password, createdAt, isVerified, verificationToken, verificationTokenExpires)   
+       VALUES (?, ?, ?, 0, ?, ?) 
+     `); 
+     return stmt.run(email, hash, new Date().toISOString(), token, expires); 
+   }); 
+ 
+   // Execute the database write 
+   const result = runTransaction(); 
+ 
+   try { 
+     // Trigger SMTP mail run safely 
+     await sendVerificationEmail(email, token); 
+      
+     res.status(201).json({ message: "Registration successful. Please check your email to verify your account." }); 
+   } catch (emailError) { 
+     console.error("SMTP Delivery Failed, rolling back database user entry:", emailError); 
+      
+     // Explicitly delete the unverified user row so they can try registering again 
+     db.prepare("DELETE FROM users WHERE email = ?").run(email); 
+      
+     res.status(502).json({ error: "Failed to send verification email. Please try registering again." }); 
+   } 
+ 
+ } catch (error) { 
+   console.error("Registration route error:", error); 
+   res.status(500).json({ error: "Internal server registry breakdown." }); 
+ } 
+}); 
+ 
 
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;

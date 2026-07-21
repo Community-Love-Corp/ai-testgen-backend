@@ -20,18 +20,26 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn("Token expired or unauthorized. Logging out...");
-      localStorage.removeItem("token");
-      // Safe redirect without using React Hooks/Toasts here
-         window.location.href = "/login?expired=true"; 
-  /*    const handleActionCheck = () => {
-        toast.warn("Token expired or unauthorized. Logging out...Please Login again.");
-      };*/
-
+    const isLoginRequest = error.config?.url?.endsWith('/login'); 
+    if (error.response){
+      
+      if(error.response.status === 401) {
+        if (!isLoginRequest) {  
+          console.warn("Token expired. Logging out...");  
+          localStorage.removeItem("token");  
+          window.location.href = "/login?expired=true";   
+        }else{  
+          console.warn("Unauthorized. Logging out...");
+        // Safe redirect without using React Hooks/Toasts here
+          window.location.href = "/login"; 
+    /*    const handleActionCheck = () => {
+          toast.warn("Token expired or unauthorized. Logging out...Please Login again.");
+        };*/
+  
+      }
     }
-    return Promise.reject(error);
   }
-);
+  return Promise.reject(error);
+});
 
 export default axios;

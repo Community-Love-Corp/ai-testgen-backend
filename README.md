@@ -232,13 +232,13 @@ c. If user not logged in, app's features don't work
 
 ![User cannot view History, if not logged in](./screenshots/NegativeTest.jpg)
 
-#### 2.0 Saturday 18 July 2026 
+### 2.0 Saturday 18 July 2026 
 
 Email verification working
 
 ![User cannot view History, if not logged in](./screenshots/emailworking.jpg)
 
-#### 3.0 Saturday 18 July 2026 14:25 HOURS - Deployment to Production
+### 3.0 Saturday 18 July 2026 14:25 HOURS - Deployment to Production
 
 Preparation:
 
@@ -283,3 +283,6 @@ Prod Backend URL:
 Rewrite Rule added to Frontend (React Single Page Application) to manage calls to non-homepage urls :
 
 ![User cannot view History, if not logged in](./screenshots/Rewrite-rule.jpg)
+
+#### 3.4 Wednesday 22 July 2026 09:52 HOURS - Improved error handling
+- REGISTER endpoint updated with 'adding user' process in db protected with a Transaction, so that if the immediately following 'Email Verification' Fails, the user creation process experiences an auto Rollback. 
