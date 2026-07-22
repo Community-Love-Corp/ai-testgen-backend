@@ -117,7 +117,7 @@ export default function Register() {
 			{/* Show registration form if not registered yet */}
 			{!isRegistered ? (
 				<form onSubmit={submit}>
-					<input 
+					<p><h4  style={{ color: 'white' }} >Email: </h4><input 
 						value={email} 
 						onChange={e => setEmail(e.target.value)} 
 						placeholder="Email" 
@@ -127,8 +127,8 @@ export default function Register() {
             title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)"
             style={{ width: "100%", padding: "8px", marginBottom: "10px" }} 
 						required
-					/>
-          <input 
+					/></p>
+          <p><h4  style={{ color: 'white' }} >Password: </h4><input 
              id="password" 
              type="password" 
              value={password} 
@@ -136,15 +136,15 @@ export default function Register() {
              placeholder="Enter secure password" 
              style={{ width: "100%", padding: "8px", marginBottom: "10px" }} 
              required
-           /> 
-					<input 
+           /> </p>
+           <p><h4  style={{ color: 'white' }} >Confirm Password: </h4><input 
 						value={confirmPassword} 
 						onChange={e => setConfirmPassword(e.target.value)} 
 						placeholder="Re-enter Password" 
 						type="password"
             style={{ width: "100%", padding: "8px", marginBottom: "10px" }} 
 						required
-					/>
+					/></p>
                 {/* Dynamic Labelling Checklist */} 
                <div style={{ fontSize: "0.85rem", background: "#1a1a2e", padding: "10px", borderRadius: "5px" }}> 
                  <p style={{ color: requirements.length ? "#00fff0" : "#ff4d4d", margin: "4px 0" }}> 
@@ -166,7 +166,7 @@ export default function Register() {
                    {requirements.noSpaces ? "✓" : "✗"} No spaces allowed 
                  </p> 
                </div> 
-					<button type="submit">Register</button>
+					<p><button type="submit">Register</button></p>
 				</form>
 			) : (
 				/* Show success message and redirect button if registered */

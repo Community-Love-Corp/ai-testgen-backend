@@ -292,7 +292,8 @@ Rewrite Rule added to Frontend (React Single Page Application) to manage calls t
 
 Catering now for TLS too, if required.
 
-### 4.00 Wednesday 22 July 2026 12:30 HOURS - Operational
+### 4.00 Wednesday 23 July 2026 - User Management Operational
 a. Issues relating to SMTP in Production environments and those introduced by add a db mounted on filesystem in Production have been remedied.
 b. Added Password input validation on the client and the server sides
 c. Added code for multifactor authentication in frontend and backend, that uses user's sign-on email as the vector for it. 
+d. Reset password functionality

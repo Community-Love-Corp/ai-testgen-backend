@@ -210,12 +210,12 @@ if (step === "mfa") {
 	return (
 		<form onSubmit={handleLogin}>
 			<h2  style={{ color: 'white' }} >Login</h2>
-			<input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={50}       
+      <p><h4  style={{ color: 'white' }} >Email: </h4><input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={50}       
           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" /* Ensures text@text.domain structure */
-          title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)" required/>
-			<input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type="password" maxLength={25} required/>
-      <button className="generate-btn" onClick={() => navigate("/forgot-password")}>Forgot Password</button>
-      <button className="generate-btn" type="submit">Login</button>
+          title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)" required/></p>
+          <p><h4  style={{ color: 'white' }} >Password: </h4><input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type="password" maxLength={25} required/></p>
+      <p><button className="generate-btn" onClick={() => navigate("/forgot-password")}>Forgot Password</button></p>
+      <p><button className="generate-btn" type="submit">Login</button></p>
       {showResendBtn && ( 
           <button  
               type="button"  
