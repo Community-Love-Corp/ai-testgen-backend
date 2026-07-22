@@ -88,7 +88,7 @@ function Main() {
       <button className="generate-btn" onClick={generateTests}>
         Generate Test Cases
       </button>
-      {loading && <p className="loading">Generating...</p>}
+      {loading && <p className="loading" style= {{ color : 'White' }} >Generating...</p>}
       {error && <p className="error">{error}</p>}
            
       <p>

@@ -3,14 +3,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //import { toast } from "react-toastify"; // 1. Import toast engine
 import { useSearchParams } from "react-router-dom"; // Hook to read URL parameters
-
+const [isResending, setIsResending] = useState(false); 
 
 export default function Login(){
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
   // Email handling inside Login.js component function:
-  const [showResend, setShowResend] = useState(false);
+  const [showResendBtn, setShowResendBtn] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
+  //NEW: Added state for MFA tracking and input
+  const [step, setStep] = useState("login");
+  const [mfaCodeInput, setMfaCodeInput] = useState("");
+  
 	const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -43,8 +48,14 @@ export default function Login(){
   e.preventDefault();
   try {
     const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, { email, password });
-    localStorage.setItem("token", res.data.token);
-    navigate("/");
+    
+    if (res.data.requiresMfa){
+      //Toggle a local flag state to render the OTP verification screen
+      setStep("mfa");
+    } else if (res.data.token){
+      localStorage.setItem("token", res.data.token);
+      navigate("/");
+    }
     //const handleBackendSuccess = () => {
     //  toast.success("Welcome back! Login verified successfully.");
     //};
@@ -66,7 +77,7 @@ export default function Login(){
           detail: { message: "Please verify your email before logging in."} 
         })
       );      
-      setShowResend(true); // Toggles visibility of a button to trigger /auth/resend-verification
+      setShowResendBtn(true); // Toggles visibility of a button to trigger /auth/resend-verification
     } else {
       //alert(err.response?.data?.error || "Login failed");
         //const handleBackendFailure = () => {
@@ -81,6 +92,82 @@ export default function Login(){
   }
 };
 
+const handleMfaSubmit = async (e) => { 
+ e.preventDefault(); 
+ try { 
+   const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/verify-mfa`, { email, code: mfaCodeInput }); 
+   localStorage.setItem("token", res.data.token); 
+   window.dispatchEvent(
+      new CustomEvent( "app-notify", {
+          detail: { message: "MFA verified successfully! Welcome. "}  
+      }) 
+   );
+   navigate("/dashboard"); 
+ } catch (err) { 
+   // Show validation error feedback 
+   window.dispatchEvent(
+      new CustomEvent( "app-notify", {
+          detail: { message: err.response?.data?.error || "Invalid MFA code.", type: "error"}  
+      }) 
+   );
+
+ } 
+};
+
+// CONDITIONAL RENDERING: Render MFA view if step is "mfa" 
+if (step === "mfa") { 
+  return ( 
+    <form onSubmit={handleMfaSubmit}> 
+      <h2 style={{ color: 'white' }}>MFA Verification</h2> 
+      <p style={{ color: 'white' }}>Please enter the 6-digit code sent to your device.</p> 
+      <input  
+        value={mfaCodeInput}  
+        onChange={e => setMfaCodeInput(e.target.value)}  
+        placeholder="6-Digit Code"  
+        maxLength={6}   
+        pattern="\d{6}"  
+        title="Please enter a 6-digit numeric verification code"  
+        required 
+      /> 
+      <button type="submit">Verify Code</button> 
+      <button type="button" onClick={() => setStep("login")} style={{ marginLeft: '10px' }}> 
+        Back to Login 
+      </button> 
+    </form> 
+  ); 
+} 
+
+
+  
+
+const handleMfaResendRequest = async () => { 
+
+    if (isResending) return; 
+
+    setIsResending(true); 
+
+    try { 
+
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/resend-verification`, { email }); 
+
+        window.dispatchEvent(new CustomEvent("app-notify", { detail: { message: "Link resent!" } })); 
+
+    } catch (err) { 
+
+        window.dispatchEvent(new CustomEvent("app-notify", { detail: { message: "Failed to resend.", type: "error" } })); 
+
+    } finally { 
+
+        setIsResending(false); 
+
+    } 
+
+}; 
+
+  
+
+// Inside your JSX return block: 
+
 	
 	return (
 		<form onSubmit={handleLogin}>
@@ -89,7 +176,17 @@ export default function Login(){
           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" /* Ensures text@text.domain structure */
           title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)" required/>
 			<input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type="password" maxLength={25} required/>
-			<button>Login</button>
+			<button type="submit">Login</button>
+      {showResend && ( 
+          <button  
+              type="button"  
+              style={{ marginLeft: "10px" }}  
+              onClick={handleMfaResendRequest} 
+              disabled={isResending} 
+          > 
+              {isResending ? "Sending..." : "Resend Verification Link"} 
+          </button> 
+      )} 
 		</form>
 	);
 }

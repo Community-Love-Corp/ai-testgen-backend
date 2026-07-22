@@ -52,5 +52,20 @@ if (!columnExists) {
   db.exec(`ALTER TABLE generations ADD COLUMN userId INTEGER;`); 
 }
 
+const mfaTableInfo = db.pragma("table_info(users)");
+const mfaCodeColumnExists = tableInfo.some(col => col.name === 'mfaCode');
+const mfaExpiresColumnExists = tableInfo.some(col => col.name === 'mfaExpires');
+
+if (!columnExists) {
+  db.exec(`ALTER TABLE generations ADD COLUMN userId INTEGER;`); 
+}
+if (!mfaCodeColumnExists) {
+  db.exec(`ALTER TABLE users ADD COLUMN mfaCode TEXT;`); 
+}
+if (!mfaExpiresColumnExists) {
+  db.exec(`ALTER TABLE users ADD COLUMN mfaExpires TEXT;`); 
+}
+
+
 
 export default db;

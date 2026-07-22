@@ -51,3 +51,23 @@ export async function sendVerificationEmail(toEmail, token) {
   console.log("SMTP Response payload:", info.response);
   return info;
 }
+
+export async function sendMfaEmail(toEmail, code) { 
+ const mailOptions = { 
+   from: `"AI TestGen Security" <${process.env.SMTP_USER}>`, 
+   to: toEmail, 
+   subject: "Your Login Verification Code - AI TestGen", 
+   html: ` 
+     <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; color: #333;"> 
+       <h2>Security Login Verification</h2> 
+       <p>A login attempt was initiated for your account. Use the following 6-digit authentication verification code to proceed:</p> 
+       <div style="font-size: 2rem; font-weight: bold; tracking-letter: 4px; padding: 15px; background: #eee; text-align: center; border-radius: 4px; color: #1a1a2e; width: fit-content; margin: 15px auto;"> 
+         ${code} 
+       </div> 
+       <p>This single-use code is valid for exactly <strong>5 minutes</strong>. If you did not make this request, please change your password immediately.</p> 
+     </div> 
+   `, 
+ }; 
+ await transporter.sendMail(mailOptions); 
+} 
+

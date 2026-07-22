@@ -45,18 +45,18 @@ function History() {
   }
   // Render loading state
   if (loading) {
-    return <div className="container"><p>Loading history...</p></div>;
+    return <div className="container" style = {{ color: 'white' }} ><p>Loading history...</p></div>;
   }
 
   // Render auth error message if not logged in
   if (authError) {
-    return <div className="container"><p>{authError}</p></div>;
+    return <div className="container" style = {{ color: 'white' }} ><p>{authError}</p></div>;
   }
 
   return (
     
     <div className="container">
-      <h1>History</h1>
+      <h1 style = {{ color: 'white' }} >History</h1>
       {items.length === 0 ? (
         <p>No history found.</p>
       ) : (

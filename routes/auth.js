@@ -28,7 +28,15 @@ router.post("/register", async (req, res) => {
    if (existing) { 
      return res.status(409).json({ error: "Email already registered" }); 
    } 
- 
+   // SERVER SIDE PASSWORD SECURITY: Regex Pattern validation to catch any bypass attempts
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])(?!\s*$).{8,}$/; 
+   const hasSpaces = /\s/.test(password); 
+    
+   if (!passwordRegex.test(password) || hasSpaces) { 
+    return res.status(400).json({  
+      error: "Password does not meet complexity rules: 8+ characters, 1 uppercase, 1 lowercase, 1 number, 1 special character, and no spaces."  
+    }); 
+   }
    const hash = await bcrypt.hash(password, 10); 
    const token = crypto.randomBytes(32).toString("hex"); 
    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); 
@@ -168,11 +176,61 @@ router.post("/login", async (req, res) => {
       });
     }
 
+      // Generate a secure 6-digit MFA Code 
+      const mfaCode = Math.floor(100000 + Math.random() * 900000).toString(); 
+      const mfaExpires = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5-minute expiry windows 
+
+      // Save MFA data to the live volume database 
+      db.prepare("UPDATE users SET mfaCode = ?, mfaExpires = ? WHERE id = ?").run(mfaCode, mfaExpires, user.id); 
+
+      // Dispatch MFA Email 
+      try { 
+        await sendMfaEmail(user.email, mfaCode); 
+      } catch (mailErr) { 
+        console.error("MFA Dispatch failed:", mailErr); 
+        return res.status(502).json({ error: "MFA Gateway down. Please retry." }); 
+      } 
+
+      // Tell frontend password is good, but MFA verification is now required 
+      res.status(200).json({ requiresMfa: true, email: user.email }); 
+    
+      /* Code without MFA
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
     res.json({ token });
-  } catch (error) {
+    */
+
+    } catch (error) {
     res.status(500).json({ error: "Login interface issue." });
   }
 });
+
+ 
+// 2. PHASE 2: VERIFY MFA CODE & GENERATE TOKEN 
+router.post("/verify-mfa", async (req, res) => { 
+ const { email, code } = req.body; 
+ 
+ try { 
+   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email); 
+   if (!user) return res.status(401).json({ error: "Authentication failed." }); 
+ 
+   const now = new Date().toISOString(); 
+ 
+   // Enforce matching token values and active non-expired windows 
+   if (!user.mfaCode || user.mfaCode !== code || now > user.mfaExpires) { 
+     return res.status(401).json({ error: "Invalid or expired verification security code." }); 
+   } 
+ 
+   // Clean out used MFA data fields instantly 
+   db.prepare("UPDATE users SET mfaCode = NULL, mfaExpires = NULL WHERE id = ?").run(user.id); 
+ 
+   // Issue the operational production app access JWT 
+   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' }); 
+   res.json({ token }); 
+ 
+ } catch (error) { 
+   res.status(500).json({ error: "Verification system error." }); 
+ } 
+}); 
+
 
 export default router;
