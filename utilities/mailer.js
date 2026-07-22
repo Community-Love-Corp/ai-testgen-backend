@@ -71,3 +71,27 @@ export async function sendMfaEmail(toEmail, code) {
  await transporter.sendMail(mailOptions); 
 } 
 
+export async function sendPasswordResetEmail(normalizedEmail, resetUrl) { 
+ const mailOptions = { 
+   from: `"AI TestGen Security" <${process.env.SMTP_USER}>`, 
+   to: normalizedEmail, 
+   subject: "Your Password Reset Link - AI TestGen", 
+   html: ` 
+     <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; color: #333;"> 
+       <h2>Password Reset Link</h2> 
+       <p>A 'Password Reset' attempt was initiated for your account. </p>
+       <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #00fff0; color: #1a1a2e; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 15px 0;">Reset Account Login Password</a>
+       <p>If the button doesn't work, copy and paste this link into your browser:</p>
+       <p><a href="${resetUrl}">${resetUrl}</a></p>
+       <p>This link will expire in 1 hour.</p>
+       <hr style="border: none; border-top: 1px solid #eee; margin-top: 20px;" />
+       <p style="font-size: 0.8rem; color: #666;">This is an automated message, please do not reply directly to this email.</p>
+  
+     </div> 
+   `, 
+ }; 
+ const info = await transporter.sendMail(mailOptions);
+ console.log("SMTP Message accepted successfully:", info.messageId);
+ console.log("SMTP Response payload:", info.response);
+ return info;
+} 

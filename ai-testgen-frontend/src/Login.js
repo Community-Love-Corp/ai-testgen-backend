@@ -3,14 +3,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //import { toast } from "react-toastify"; // 1. Import toast engine
 import { useSearchParams } from "react-router-dom"; // Hook to read URL parameters
-const [isResending, setIsResending] = useState(false); 
+//import { useGoogleReCaptcha } from "react-google-recaptcha-v3"; 
 
 export default function Login(){
+  //const { executeRecaptcha } = useGoogleReCaptcha();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
   // Email handling inside Login.js component function:
   const [showResendBtn, setShowResendBtn] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+    const [isResending, setIsResending] = useState(false);
 
   //NEW: Added state for MFA tracking and input
   const [step, setStep] = useState("login");
@@ -46,26 +47,61 @@ export default function Login(){
 
   const handleLogin = async (e) => {
   e.preventDefault();
-  try {
-    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, { email, password });
+  try { 
     
-    if (res.data.requiresMfa){
-      //Toggle a local flag state to render the OTP verification screen
-      setStep("mfa");
-    } else if (res.data.token){
-      localStorage.setItem("token", res.data.token);
-      navigate("/");
-    }
-    //const handleBackendSuccess = () => {
-    //  toast.success("Welcome back! Login verified successfully.");
-    //};
-    // Replacement syntax line for your files:
-    window.dispatchEvent(
-      new CustomEvent("app-notify", { 
-        detail: { message: "Welcome back! Login verified successfully."} 
-      })
-    );
+    /*if(!executeRecaptcha){
+      throw new Error("reCAPTCHA has not initialised yet.")
+    }*/
+    // Execute reCAPTCHA using the hook function
+    //const recaptchaToken = await executeRecaptcha('login');
+    
+      // 1. Ensure grecaptcha is fully loaded on the window object 
+      if (!window.grecaptcha) { 
+          throw new Error("reCAPTCHA script has not loaded yet."); 
+      } 
+      
+      const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+      if(!siteKey){
+        throw new Error("Missing reCAPTCHA Site Key environment variable.");
+      }
+      // 2. Execute reCAPTCHA v3 with your action name 
+      const token = await window.grecaptcha.execute( 
+          siteKey, { action: "login" } 
+      ); 
 
+      // 3. Append the token to your existing Axios payload 
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {  
+          email,  
+          password, 
+          recaptchaToken: token // Send to backend for verification 
+      });  
+
+      if (res.data.requiresMfa){
+        //Toggle a local flag state to render the OTP verification screen
+        setStep("mfa");
+        
+        window.dispatchEvent(
+          new CustomEvent("app-notify", { 
+            detail: { message: "An Email with 6 digit Code has been sent."} 
+          })
+        );
+  
+      } else if (res.data.token){
+        localStorage.setItem("token", res.data.token);
+        navigate("/");
+        
+        window.dispatchEvent(
+          new CustomEvent("app-notify", { 
+            detail: { message: "Welcome back! Login verified successfully."} 
+          })
+        );
+  
+      }
+      //const handleBackendSuccess = () => {
+      //  toast.success("Welcome back! Login verified successfully.");
+      //};
+      // Replacement syntax line for your files:
+  
   } catch (err) {
     if (err.response && err.response.status === 403 && err.response.data.requiresVerification) {
       //alert("Please verify your email before logging in.");
@@ -114,31 +150,7 @@ const handleMfaSubmit = async (e) => {
  } 
 };
 
-// CONDITIONAL RENDERING: Render MFA view if step is "mfa" 
-if (step === "mfa") { 
-  return ( 
-    <form onSubmit={handleMfaSubmit}> 
-      <h2 style={{ color: 'white' }}>MFA Verification</h2> 
-      <p style={{ color: 'white' }}>Please enter the 6-digit code sent to your device.</p> 
-      <input  
-        value={mfaCodeInput}  
-        onChange={e => setMfaCodeInput(e.target.value)}  
-        placeholder="6-Digit Code"  
-        maxLength={6}   
-        pattern="\d{6}"  
-        title="Please enter a 6-digit numeric verification code"  
-        required 
-      /> 
-      <button type="submit">Verify Code</button> 
-      <button type="button" onClick={() => setStep("login")} style={{ marginLeft: '10px' }}> 
-        Back to Login 
-      </button> 
-    </form> 
-  ); 
-} 
 
-
-  
 
 const handleMfaResendRequest = async () => { 
 
@@ -166,6 +178,32 @@ const handleMfaResendRequest = async () => {
 
   
 
+
+// CONDITIONAL RENDERING: Render MFA view if step is "mfa" 
+if (step === "mfa") { 
+  return ( 
+    <form onSubmit={handleMfaSubmit}> 
+      <h2 style={{ color: 'white' }}>MFA Verification</h2> 
+      <p style={{ color: 'white' }}>Please enter the 6-digit code sent to your Inbox (Check Spam Folder too).</p> 
+      <input  
+        value={mfaCodeInput}  
+        onChange={e => setMfaCodeInput(e.target.value)}  
+        placeholder="6-Digit Code"  
+        maxLength={6}   
+        pattern="\d{6}"  
+        title="Please enter a 6-digit numeric verification code"  
+        required 
+      /> 
+      <button type="submit">Verify Code</button> 
+      <button type="button" onClick={() => setStep("login")} style={{ marginLeft: '10px' }}> 
+        Back to Login 
+      </button> 
+    </form> 
+  ); 
+} 
+
+
+  
 // Inside your JSX return block: 
 
 	
@@ -176,8 +214,9 @@ const handleMfaResendRequest = async () => {
           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" /* Ensures text@text.domain structure */
           title="Please enter a valid email address containing an '@' symbol and a domain (e.g. user@example.com)" required/>
 			<input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type="password" maxLength={25} required/>
-			<button type="submit">Login</button>
-      {showResend && ( 
+      <button className="generate-btn" onClick={() => navigate("/forgot-password")}>Forgot Password</button>
+      <button className="generate-btn" type="submit">Login</button>
+      {showResendBtn && ( 
           <button  
               type="button"  
               style={{ marginLeft: "10px" }}  

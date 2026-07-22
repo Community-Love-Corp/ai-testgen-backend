@@ -12,12 +12,21 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import db from "../db.js";
 import { sendVerificationEmail } from "../utilities/mailer.js";
+import { sendMfaEmail } from "../utilities/mailer.js";
+import { sendPasswordResetEmail } from "../utilities/mailer.js";
+import verifyRecaptcha from "../utilities/DDOS_Protection.js";
+
 
 const router = express.Router();
 
 // 1. REGISTER (Protected with Transaction and Email Failure Rollback) 
 router.post("/register", async (req, res) => { 
- const { email, password } = req.body; 
+  const { email, password, recaptchaToken } = req.body;
+  // Bot Check
+  const isHuman = await verifyRecaptcha(recaptchaToken)
+  if (!isHuman){
+    return res.status(400).json({ error: "Bot activity detected or reCAPTCHA verification failed." });
+  }
  
  if (!email || !password) { 
    return res.status(400).json({ error: "Email and password required." }); 
@@ -37,7 +46,9 @@ router.post("/register", async (req, res) => {
       error: "Password does not meet complexity rules: 8+ characters, 1 uppercase, 1 lowercase, 1 number, 1 special character, and no spaces."  
     }); 
    }
-   const hash = await bcrypt.hash(password, 10); 
+   //const salt = await bcrypt.genSalt(10); 
+   //const hash = await bcrypt.hash(password, salt); 
+   const hash = await bcrypt.hash(password, 10);
    const token = crypto.randomBytes(32).toString("hex"); 
    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); 
  
@@ -159,8 +170,13 @@ router.post("/resend-verification", async (req, res) => {
 
 // 4. LOGIN (Updated to enforce verification validation checks)
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
+  const { email, password, recaptchaToken } = req.body;
+  // Bot Check
+  const isHuman = await verifyRecaptcha(recaptchaToken)
+  if (!isHuman){
+    return res.status(400).json({ error: "Bot activity detected or reCAPTCHA verification failed." });
+  }
+ 
   try {
     const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
     if (!user) return res.status(411).json({ error: "Invalid Credentials" }); // Avoid revealing account existence distinctions
@@ -232,5 +248,90 @@ router.post("/verify-mfa", async (req, res) => {
  } 
 }); 
 
+// --- STEP 1: REQUEST PASSWORD RESET ---  
+router.post("/forgot-password", async (req, res) => {  
+ const { email, recaptchaToken } = req.body;  
+ 
+ // Protect endpoint with reCAPTCHA v3  
+ const isHuman = await verifyRecaptcha(recaptchaToken);  
+ if (!isHuman) {  
+   return res.status(400).json({ error: "Bot activity detected or recaptcha verification failed." });  
+ }  
+ 
+ const normalizedEmail = email.toLowerCase();  
+ 
+ try { 
+   // 1. Look up the user in SQLite using better-sqlite3 syntax 
+   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(normalizedEmail);  
+ 
+   // Security best practice: Don't reveal if an email doesn't exist to prevent enumeration  
+   if (!user) {  
+     return res.json({ message: "If that email exists, a reset link has been sent." });  
+   }  
+ 
+   // Generate secure token and expiration (1 hour stored as ISO string or timestamp)  
+   const resetToken = crypto.randomBytes(32).toString("hex");  
+    
+   // Using an ISO string for consistent datetime comparisons across your database entries 
+   const resetPasswordExpires = new Date(Date.now() + 3600000).toISOString();  
+ 
+   // 2. Save the token to the SQLite database synchronously 
+   db.prepare("UPDATE users SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE email = ?") 
+     .run(resetToken, resetPasswordExpires, normalizedEmail); 
+ 
+   // Create the reset link pointing to your React frontend route  
+   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;  
+    
+   // Send email logic goes here (e.g., using Nodemailer, SendGrid, or Resend)  
+   console.log(`[EMAIL SIMULATION] Send to ${normalizedEmail}: Click here to reset ${resetUrl}`);  
+   // Dispatch MFA Email 
+   try { 
+     await sendPasswordResetEmail(normalizedEmail, resetUrl); 
+   } catch (mailErr) { 
+     console.error("MFA Dispatch failed:", mailErr); 
+     return res.status(502).json({ error: "MFA Gateway down. Please retry." }); 
+   } 
 
+   
+   
+   return res.json({ message: "If that email exists, a reset link has been sent." });  
+ 
+ } catch (error) { 
+   console.error("Forgot password route error:", error); 
+   return res.status(500).json({ error: "Internal server error handling reset request." }); 
+ } 
+});  
+ 
+// --- STEP 2: EXECUTE PASSWORD RESET ---  
+router.post("/reset-password", async (req, res) => {  
+ const { token, password } = req.body;  
+ if (!token || !password) {  
+   return res.status(400).json({ error: "Missing required parameters." });  
+ }  
+ 
+ const currentTime = new Date().toISOString();  
+ 
+ try { 
+   // 1. Find user with matching, unexpired token using better-sqlite3 syntax 
+   const user = db.prepare("SELECT * FROM users WHERE resetPasswordToken = ? AND resetPasswordExpires > ?") 
+                  .get(token, currentTime);  
+ 
+   if (!user) {  
+     return res.status(400).json({ error: "Password reset token is invalid or has expired." });  
+   }  
+ 
+   // Hash new password  
+   const hashedPassword = await bcrypt.hash(password, 10);  
+ 
+   // 2. Update password and clear reset token fields synchronously 
+   db.prepare("UPDATE users SET password = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id = ?") 
+     .run(hashedPassword, user.id);  
+ 
+   return res.json({ message: "Password updated successfully! You can now log in." }); 
+ 
+ } catch (error) {  
+   console.error("Reset password database or encryption error:", error);  
+   return res.status(500).json({ error: "Failed to update password." });  
+ }  
+});
 export default router;

@@ -58,7 +58,7 @@ function History() {
     <div className="container">
       <h1 style = {{ color: 'white' }} >History</h1>
       {items.length === 0 ? (
-        <p>No history found.</p>
+        <p><b style={{ color: 'white' }} >No history found.</b></p>
       ) : (
         items.map(item => (
           <div key={item.id || item._id} className="results">

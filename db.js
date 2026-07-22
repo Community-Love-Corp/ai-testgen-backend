@@ -52,9 +52,11 @@ if (!columnExists) {
   db.exec(`ALTER TABLE generations ADD COLUMN userId INTEGER;`); 
 }
 
-const mfaTableInfo = db.pragma("table_info(users)");
-const mfaCodeColumnExists = tableInfo.some(col => col.name === 'mfaCode');
-const mfaExpiresColumnExists = tableInfo.some(col => col.name === 'mfaExpires');
+const userTableInfo = db.pragma("table_info(users)");
+const mfaCodeColumnExists = userTableInfo.some(col => col.name === 'mfaCode');
+const mfaExpiresColumnExists = userTableInfo.some(col => col.name === 'mfaExpires');
+const resetPwdTokenColumnExists = userTableInfo.some(col => col.name === 'resetPasswordToken');
+const resetPwdTokenExpiresColumnExists = userTableInfo.some(col => col.name === 'resetPasswordExpires');
 
 if (!columnExists) {
   db.exec(`ALTER TABLE generations ADD COLUMN userId INTEGER;`); 
@@ -64,6 +66,12 @@ if (!mfaCodeColumnExists) {
 }
 if (!mfaExpiresColumnExists) {
   db.exec(`ALTER TABLE users ADD COLUMN mfaExpires TEXT;`); 
+}
+if (!resetPwdTokenColumnExists) {
+  db.exec(`ALTER TABLE users ADD COLUMN resetPasswordToken TEXT;`); 
+}
+if (!resetPwdTokenExpiresColumnExists) {
+  db.exec(`ALTER TABLE users ADD COLUMN resetPasswordExpires TEXT;`); 
 }
 
 

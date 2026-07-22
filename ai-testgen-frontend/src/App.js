@@ -6,7 +6,9 @@ import Main from "./Main";
 import History from "./History";
 import "./App.css";
 import Login from "./Login";
-import Register from "./Register"
+import Register from "./Register";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 import Interceptor from "./utilities/AxiosInterceptor";
 // Import React-Toastify dependencies
 //import { ToastContainer } from 'react-toastify';
@@ -81,10 +83,12 @@ return (
           </div>
           <Routes>
             <Route path="/" element={<Main />} />
+            <Route path="/dashboard" element={<Main />} />
             <Route path="/history" element={<History />} />
 		      	<Route path="/login" element={<Login />} />
 	       		<Route path="/register" element={<Register />} />
-
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* 2. ADD THIS PATH INTERACTION LAYER MAP */}
             <Route path="/verify-email" element={<VerifyEmail />} />
           </Routes>

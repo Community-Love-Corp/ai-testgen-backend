@@ -11,18 +11,18 @@ export default function Register() {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isRegistered, setIsRegistered] = useState(false); // Controls rendering the login button
 	const navigate = useNavigate();
- 
+  const requirements = { 
+    length: password.length >= 8, 
+    uppercase: /[A-Z]/.test(password), 
+    lowercase: /[a-z]/.test(password), 
+    number: /[0-9]/.test(password), 
+    special: /[^A-Za-z0-9]/.test(password), 
+    noSpaces: !/\s/.test(password) && password.length > 0, 
+  }; 
   const submit = async (e) => {
     e.preventDefault();
     // Validation checks broken down for the UI checklist 
-    const requirements = { 
-      length: password.length >= 8, 
-      uppercase: /[A-Z]/.test(password), 
-      lowercase: /[a-z]/.test(password), 
-      number: /[0-9]/.test(password), 
-      special: /[^A-Za-z0-9]/.test(password), 
-      noSpaces: !/\s/.test(password) && password.length > 0, 
-    }; 
+
 
     const isPasswordValid = Object.values(requirements).every(Boolean);   
     
@@ -50,22 +50,40 @@ export default function Register() {
 
       return;
     }
-    // Debugging check: Confirm the URL is loading correctly in the browser
-    console.log("Sending request to:", `${process.env.REACT_APP_BACKEND_URL}/auth/register`);
+    
+    try { 
+      
+      if (!window.grecaptcha) { 
+          throw new Error("reCAPTCHA script has not loaded yet."); 
+      } 
 
-    try {
-      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, {
-        email, password
-      });
-
-      // FIX: Check for any successful response (200, 201, etc.)
-      if (res.status >= 200 && res.status < 300) {
-        console.log("Registration successful!", res.data);
-        setIsRegistered(true); 
-      } else {
-        // Alert yourself if the status is unexpected
-        console.warn("Unexpected status code received:", res.status);
+      const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+      if(!siteKey){
+        throw new Error("Missing reCAPTCHA Site Key environment variable.");
       }
+      // 2. Execute reCAPTCHA v3 with your action name 
+      const token = await window.grecaptcha.execute( 
+          siteKey, { action: "register" } 
+      ); 
+
+      // Debugging check: Confirm the URL is loading correctly in the browser
+      console.log("Sending request to:", `${process.env.REACT_APP_BACKEND_URL}/auth/register`);
+
+      // 3. Append the token to your existing Axios payload 
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, {  
+          email,  
+          password, 
+          recaptchaToken: token // Send to backend for verification 
+      });  
+
+        // FIX: Check for any successful response (200, 201, etc.)
+        if (res.status >= 200 && res.status < 300) {
+          console.log("Registration successful!", res.data);
+          setIsRegistered(true); 
+        } else {
+          // Alert yourself if the status is unexpected
+          console.warn("Unexpected status code received:", res.status);
+        }
     } catch (error) { 
 
       // Extract the specific error message from the backend response 
