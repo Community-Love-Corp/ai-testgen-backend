@@ -68,10 +68,10 @@ export default function Login(){
       const token = await window.grecaptcha.execute( 
           siteKey, { action: "login" } 
       ); 
-
+      const emailLowerCase = email.toLowerCase();
       // 3. Append the token to your existing Axios payload 
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {  
-          email,  
+          email: emailLowerCase,  
           password, 
           recaptchaToken: token // Send to backend for verification 
       });  

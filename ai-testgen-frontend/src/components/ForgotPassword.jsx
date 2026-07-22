@@ -21,10 +21,10 @@ export default function ForgotPassword() {
      const token = await window.grecaptcha.execute( 
          siteKey, { action: "forgot_password" } 
      ); 
-
+     const emailLowerCase = email.toLowerCase(); 
      // 3. Append the token to your existing Axios payload 
      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/forgot-password`, {  
-         email,  
+         email: emailLowerCase,  
          recaptchaToken: token // Send to backend for verification 
      });  
     console.log(`response 4 Forgot Password: ${res}`);

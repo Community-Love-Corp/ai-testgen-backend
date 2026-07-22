@@ -65,13 +65,13 @@ export default function Register() {
       const token = await window.grecaptcha.execute( 
           siteKey, { action: "register" } 
       ); 
-
+      const emailLowerCase = email.toLowerCase();
       // Debugging check: Confirm the URL is loading correctly in the browser
       console.log("Sending request to:", `${process.env.REACT_APP_BACKEND_URL}/auth/register`);
 
       // 3. Append the token to your existing Axios payload 
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, {  
-          email,  
+          email: emailLowerCase,  
           password, 
           recaptchaToken: token // Send to backend for verification 
       });  
